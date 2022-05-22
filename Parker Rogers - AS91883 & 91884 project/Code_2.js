@@ -24,8 +24,6 @@ var downPressed = false
 var leftPressed = false
 var rightPressed = false
 
-var gravity = 0.5
-var friction = 0.9
 
 //load canvas
 function startCanvas(){
@@ -59,27 +57,6 @@ function updateCanvas() {
 		playerY -= velocityY
 	}
 
-	//boundry collison
-	if (playerX + playerWidth >= WIDTH){
-		playerX = WIDTH - playerWidth
-	}
-	if(playerX < WIDTH - WIDTH){
-		playerX = WIDTH - WIDTH
-	}
-	if(playerY + playerHeight >= HEIGHT){
-		playerY = HEIGHT - playerHeight
-	}
-	if(playerY < HEIGHT - HEIGHT){
-		playerY = HEIGHT - HEIGHT
-	}
-		
-	
-	//gravity
-	if(playerY > playerY + playerHeight){
-		playerY == playerY + gravity
-
-	}
-
 
 }
 
@@ -89,7 +66,7 @@ function keyDownFunction(keyboardEvent){
 	var keyPress = keyboardEvent.key
 	
 	///console.log("you pressed ", keyPress)
-	//move when key is pressed
+	
 	if (keyPress=="w"){
 		upPressed = true
 	}
@@ -107,16 +84,9 @@ function keyDownFunction(keyboardEvent){
 } 
 
 function keyUpFunction(keyboardEvent){
-	//stop moving when key is relesed 
+
 	upPressed = false
 	leftPressed = false
 	rightPressed = false
 	downPressed = false
-}
-
-function collide(){
-	if (playerX + playerWidth >= WIDTH){
-		playerX = WIDTH - playerWidth
-	}
-
 }

@@ -24,8 +24,6 @@ var downPressed = false
 var leftPressed = false
 var rightPressed = false
 
-var gravity = 0.5
-var friction = 0.9
 
 //load canvas
 function startCanvas(){
@@ -59,7 +57,7 @@ function updateCanvas() {
 		playerY -= velocityY
 	}
 
-	//boundry collison
+	//collison
 	if (playerX + playerWidth >= WIDTH){
 		playerX = WIDTH - playerWidth
 	}
@@ -74,11 +72,7 @@ function updateCanvas() {
 	}
 		
 	
-	//gravity
-	if(playerY > playerY + playerHeight){
-		playerY == playerY + gravity
-
-	}
+	
 
 
 }
