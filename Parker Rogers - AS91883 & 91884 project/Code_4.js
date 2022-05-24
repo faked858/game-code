@@ -80,8 +80,8 @@ function updateCanvas() {
 	//if(playerY < WIDTH - playerHeight){
 	//	playerY = playerY + velocityY + gravity
 	//}
-	//gravitySpeed += gravity;
-    //    playerY += velocityY + gravitySpeed;
+	this.gravitySpeed += this.gravity;
+        this.playerY += this.velocityY + this.gravitySpeed;
 	}
 
 
