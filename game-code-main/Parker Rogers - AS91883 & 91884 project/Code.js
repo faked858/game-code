@@ -88,8 +88,11 @@ function updateCanvas() {
 	//console.log(gravitySpeed)	
 	
 	//jump
-	if(upPressed == true){
-		
+	if(upPressed == true && playerY < HEIGHT){
+		jumpSpeed += jump;
+		playerY -= velocityY + jumpSpeed	
+	} else{
+		jumpSpeed = 0
 	}
 
 	//friction
