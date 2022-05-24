@@ -6,6 +6,9 @@ window.onload=startCanvas
 window.addEventListener('keydown', keyDownFunction)
 window.addEventListener('keyup', keyUpFunction)
 
+const PLAYER_IMAGE = new Image()
+PLAYER_IMAGE.src = "pixilart-drawing.png"
+
 var playerHeight = 75;
 var playerWidth = 75;
 
@@ -13,8 +16,6 @@ var WIDTH = 1000;
 var HEIGHT = 800;
 var ctx
 
-var playerX = 100;
-var playerY = 100;
 
 var velocityX = 3;
 var velocityY = 3;
@@ -25,11 +26,34 @@ var leftPressed = false
 var rightPressed = false
 
 var gravity = 0.5;
-var gravitySpeed = .25;
+var gravitySpeed = 0.25;
 var friction = 0.9;
 
-var jump = 0.5
-var jumpSpeed = 0
+var jump = 0.15
+var jumpSpeed = 50
+
+class GameObject{
+	constructor(id,image,x,y,width,height){
+		this.id=id;
+		this.image=image
+		this.x=x
+		this.y=y
+		this.width=width
+		this.height=height
+	}
+
+	setPos(x,y){
+		this.x=x
+		this.y=y
+	}
+	draw(){
+		ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
+	}
+
+
+}
+
+var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
 
 //load canvas
 function startCanvas(){
@@ -43,58 +67,58 @@ console.log(upPressed)
 function updateCanvas() {
 	ctx.fillStyle="white"
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
-
 	
+	player.draw()
 	
 	ctx.fillStyle = "black";
-	ctx.fillRect(playerX, playerY, playerHeight, playerWidth)
+	//ctx.fillRect(player.x, player.y, playerHeight, playerWidth)
 	///console.log("frame")
 	
 	if(rightPressed == true){
-		playerX += velocityX
+		player.x += velocityX
 	}
 	if(leftPressed == true){
-		playerX -= velocityX
+		player.x -= velocityX
 	}
 	if(downPressed == true){
-		playerY += velocityY
+		player.y += velocityY
 	}
 	if(upPressed == true){
-		playerY -= velocityY
+		player.y -= velocityY
 	}
 
 	//boundry collison
-	if (playerX + playerWidth >= WIDTH){
-		playerX = WIDTH - playerWidth
+	if (player.x + playerWidth >= WIDTH){
+		player.x = WIDTH - playerWidth
 	}
-	if(playerX < WIDTH - WIDTH){
-		playerX = WIDTH - WIDTH
+	if(player.x < WIDTH - WIDTH){
+		player.x = WIDTH - WIDTH
 	}
-	if(playerY + playerHeight >= HEIGHT){
-		playerY = HEIGHT - playerHeight
+	if(player.y + playerHeight >= HEIGHT){
+		player.y = HEIGHT - playerHeight
 	}
-	if(playerY < HEIGHT - HEIGHT){
-		playerY = HEIGHT - HEIGHT
+	if(player.y < HEIGHT - HEIGHT){
+		player.y = HEIGHT - HEIGHT
 	}
 		
 	//console.log(velocityY)
 	//gravity
-	if(playerY < HEIGHT - playerHeight && upPressed != true){
+	if(player.y < HEIGHT - playerHeight && upPressed != true){
 	gravitySpeed += gravity;
-    playerY += velocityY + gravitySpeed;
+    player.y += velocityY + gravitySpeed;
 	} else{
 		gravitySpeed = 0
 	}
 	//console.log(gravitySpeed)	
 	
 	//jump
-	if(upPressed == true && playerY < HEIGHT){
-		jumpSpeed += jump;
-		playerY -= velocityY + jumpSpeed	
+	if(upPressed == true && player.y < HEIGHT - player.height){
+		jumpSpeed -= jump;
+		player.y -= velocityY + jumpSpeed	
 	} else{
 		jumpSpeed = 0
 	}
-
+	console.log(jumpSpeed)
 	//friction
 
 }
@@ -132,8 +156,8 @@ function keyUpFunction(keyboardEvent){
 }
 
 function collide(){
-	if (playerX + playerWidth >= WIDTH){
-		playerX = WIDTH - playerWidth
+	if (player.x + playerWidth >= WIDTH){
+		player.x = WIDTH - playerWidth
 	}
 
 }
