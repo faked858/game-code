@@ -120,7 +120,7 @@ function updateCanvas() {
 	}
 	console.log(jumpSpeed)
 	//friction
-
+	
 }
 	
 
