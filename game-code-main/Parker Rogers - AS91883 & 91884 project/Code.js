@@ -31,6 +31,7 @@ var friction = 0.9;
 
 var jump = 0.15
 var jumpSpeed = 50
+var trueJump = false 
 
 class GameObject{
 	constructor(id,image,x,y,width,height){
@@ -61,7 +62,7 @@ function startCanvas(){
 	timer = setInterval(updateCanvas, 10)
 }
 
-console.log(upPressed)
+
 
 //this is used to update the canvas every frame, anything that moves must be put in here
 function updateCanvas() {
@@ -114,17 +115,21 @@ function updateCanvas() {
 	//jump
 	if(upPressed == true && player.y < HEIGHT - player.height){
 		jumpSpeed -= jump;
-		player.y -= velocityY + jumpSpeed	
+		player.y -= velocityY + jumpSpeed
+		trueJump = true
 	} else{
 		jumpSpeed = 0
+		trueJump = false
 	}
-	console.log(jumpSpeed)
-	//friction
+	//console.log("jumpSpeed is " + jumpSpeed)
 	
+	//friction
 }
 	
-
-
+if(trueJump == true){
+	upPressed = false
+	console.log("does this work?")
+}
 //this function is called when a key is pressed 
 function keyDownFunction(keyboardEvent){
 	var keyPress = keyboardEvent.key
