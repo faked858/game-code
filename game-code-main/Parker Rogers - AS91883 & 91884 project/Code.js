@@ -171,5 +171,5 @@ if(upPressed == true && player.y < HEIGHT - player.height){
 }
 
 function frictionFunction(){
-	if(){}
+	//if(){}
 }
