@@ -32,6 +32,7 @@ var jump = 0.15
 var jumpSpeed = 50
 var trueJump = false 
 
+//player object
 class GameObject{
 	constructor(id,image,x,y,width,height,pWidth,pHeight){
 		this.id=id;
@@ -51,7 +52,7 @@ class GameObject{
 		this.x = WIDTH - WIDTH}
 		if(this.y + this.pHeight >= HEIGHT){
 			this.y = HEIGHT - this.pHeight}
-		if(this.y >= HEIGHT - HEIGHT){
+		if(this.y < HEIGHT - HEIGHT){
 			this.y = HEIGHT - HEIGHT
 		}
 	}
@@ -70,6 +71,7 @@ class GameObject{
 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
 
+
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
@@ -83,17 +85,11 @@ function updateCanvas() {
 	ctx.fillStyle="white"
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
+	//draw the player
 	player.draw()
-	
-	ctx.fillStyle = "black";
-	//ctx.fillRect(player.x, player.y, playerHeight, playerWidth)
-	///console.log("frame")
 	
 	//calls the player movement functon
 	movementFunction()
-
-	//boundry collison function
-	//collisionFunction()
 		
 	//gravityFunction
 	gravityFunction()	
@@ -102,13 +98,12 @@ function updateCanvas() {
 	jumpFunction()
 	
 	//friction
+	frictionFunction()
 
+	//calls the collide function
 	player.collide()
 }
 
-
-
-	
 
 //this function is called when a key is pressed 
 function keyDownFunction(keyboardEvent){
@@ -137,21 +132,6 @@ function keyUpFunction(keyboardEvent){
 	rightPressed = false
 	downPressed = false
 }
-//allows player collision with the boundrys, might be redundent later because i need to make a new collision system
-/*function collisionFunction() {
-if (player.x + playerWidth >= WIDTH){
-	player.x = WIDTH - playerWidth
-}
-if(player.x < WIDTH - WIDTH){
-	player.x = WIDTH - WIDTH
-}
-if(player.y + playerHeight >= HEIGHT){
-	player.y = HEIGHT - playerHeight
-}
-if(player.y < HEIGHT - HEIGHT){
-	player.y = HEIGHT - HEIGHT
-}
-}*/
 
 //this is the gravity function, makes gravity work 
 function gravityFunction() {
@@ -190,3 +170,6 @@ if(upPressed == true && player.y < HEIGHT - player.height){
 }
 }
 
+function frictionFunction(){
+	if(){}
+}
