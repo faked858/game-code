@@ -32,6 +32,9 @@ var jump = 0.15
 var jumpSpeed = 50
 var trueJump = false 
 
+var tick = 0
+
+
 //player object
 class GameObject{
 	constructor(id,image,x,y,width,height,pWidth,pHeight){
@@ -43,6 +46,7 @@ class GameObject{
 		this.height=height
 		this.pWidth=75
 		this.pHeight=75
+		//contsructor variable
 	}
 
 	collide(){
@@ -68,9 +72,8 @@ class GameObject{
 
 
 }
-
+//create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
-
 
 //load canvas
 function startCanvas(){
@@ -102,6 +105,11 @@ function updateCanvas() {
 
 	//calls the collide function
 	player.collide()
+
+	//player.x += velocityX
+	//player.y += velocityY
+	tick ++
+
 }
 
 
@@ -123,7 +131,13 @@ function keyDownFunction(keyboardEvent){
 	if (keyPress=="d"){
 		rightPressed = true
 	}
+	
+	if(keyPress == "w"){
+		//console.log(tick)
+	}
 } 
+
+
 
 function keyUpFunction(keyboardEvent){
 	//stop moving when key is relesed 
@@ -135,8 +149,8 @@ function keyUpFunction(keyboardEvent){
 
 //this is the gravity function, makes gravity work 
 function gravityFunction() {
-if(player.y < HEIGHT - playerHeight && upPressed != true){
-	gravitySpeed += gravity;
+if(player.y < HEIGHT - playerHeight && upPressed != true){//gravity criteria
+	gravitySpeed += gravity;//gravity mechanism
     player.y += velocityY + gravitySpeed;
 	} else{
 		gravitySpeed = 0
@@ -160,16 +174,29 @@ if(upPressed == true){
 }
 
 function jumpFunction() {
-if(upPressed == true && player.y < HEIGHT - player.height){
+if(upPressed == true && player.y < HEIGHT - player.height)//conditions for jump
+{//jump mechanism
 	jumpSpeed -= jump;
 	player.y -= velocityY + jumpSpeed
 	trueJump = true
-} else{
+} else{//if no jump is happening
 	jumpSpeed = 0
 	trueJump = false
 }
+//bounce
+if(jumpSpeed < -5 && player.y == HEIGHT - player.height){//bounce condition
+	console.log("does this work?")
+}
+console.log(jumpSpeed)
 }
 
+
 function frictionFunction(){
-	//if(){}
+	/*if(rightPressed == false){
+		player.x = player.x + velocityX *-0.5
+	}
+	if(leftPressed == false){
+		player.x = player.x + velocityX *+0.5
+	}*/
+
 }
