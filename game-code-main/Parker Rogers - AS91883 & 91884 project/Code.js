@@ -43,8 +43,8 @@ class GameObject{
 		this.y=y
 		this.width=width
 		this.height=height
-		this.pWidth=75
-		this.pHeight=75
+		this.pWidth=playerWidth
+		this.pHeight=playerHeight
 		//contsructor variable
 	}
 
@@ -76,9 +76,10 @@ var obsticales = []
 
 function generateObstacles(number){
 	for(i=0; i<number; i ++){
-		obsticales.push(new object)
+		obsticales.push(new GameObject("obstacle"+i,image, 0,0,10,10))
 	}
 }
+
 
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
@@ -109,7 +110,7 @@ function updateCanvas() {
 	jumpFunction()
 	
 	//friction
-	frictionFunction()
+	//frictionFunction()
 
 	//calls the collide function
 	player.collide()
