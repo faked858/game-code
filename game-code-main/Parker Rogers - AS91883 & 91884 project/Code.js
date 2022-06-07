@@ -16,20 +16,17 @@ var WIDTH = 1000;
 var HEIGHT = 800;
 var ctx
 
-var velocityX = 3;
-var velocityY = 3;
+var velocityX = 0;
+var velocityY = 0;
 
 var upPressed = false
-var downPressed = false
 var leftPressed = false
 var rightPressed = false
 
 var gravity = 0.5;
-var gravitySpeed = 0.25;
 var friction = 0.9;
 
 var jump = 0.15
-var jumpSpeed = 50
 var trueJump = false 
 
 var tick = 0
@@ -37,27 +34,27 @@ var tick = 0
 
 //player object
 class GameObject{
-	constructor(id,image,x,y,width,height,pWidth,pHeight){
+	constructor(id,image,x,y,width,height,pWidth,pHeight,){
 		this.id=id;
 		this.image=image
 		this.x=x
 		this.y=y
 		this.width=width
 		this.height=height
-		this.pWidth=75
-		this.pHeight=75
+		this.pWidth=playerWidth
+		this.pHeight=playerHeight
 		//contsructor variable
 	}
 
-	collide(){
-		if(this.x + this.pWidth >= WIDTH){
-			this.x = WIDTH - this.pWidth}
-		if(this.x <= WIDTH - WIDTH){
-		this.x = WIDTH - WIDTH}
-		if(this.y + this.pHeight >= HEIGHT){
-			this.y = HEIGHT - this.pHeight}
-		if(this.y < HEIGHT - HEIGHT){
-			this.y = HEIGHT - HEIGHT
+	collide(){//collision detection
+		if(this.x + this.pWidth >= WIDTH){//if right side of player is more than or equal to the right side of the canvas
+			this.x = WIDTH - this.pWidth}//make sure player doesnt clip out of map
+		if(this.x <= WIDTH - WIDTH){//if left side of player is less than or equal to left side of the canvas
+		this.x = WIDTH - WIDTH}//stops left side of player leaving canvas
+		if(this.y + this.pHeight >= HEIGHT){//if the bottom of the player is more than or equal to the bottom of the canvas
+			this.y = HEIGHT - this.pHeight}//stop the player from leaving the map from the bottom
+		if(this.y < HEIGHT - HEIGHT){//if the top of the player is more than or equal to the top of the canvas
+			this.y = HEIGHT - HEIGHT//stop the player from leaving the canvas from the top
 		}
 	}
 	
@@ -66,12 +63,36 @@ class GameObject{
 		this.y=y
 	}
 
-	draw(){
+	draw(){//draw the player
 		ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
 	}
 
 
 }
+
+var obsticales = [];//obsticales
+var num = 2//number of obsticales
+function generateObstacles(){//create obsticales
+	for(i = 0; i < num; i++) {
+		platforms.push(
+			{//obsticale data
+			x: 100 * i,
+			y: 200 + (30 * i),
+			width: 110,
+			height: 15
+			}
+		);
+	}
+}
+
+function renderObsticales(){//render obsticales
+	ctx.fillStyle ="black"
+	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height);//obsticale 1
+    ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height);//obsticale 2
+	console.log("is this working?")
+}
+
+
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
 
@@ -88,52 +109,37 @@ function updateCanvas() {
 	ctx.fillStyle="white"
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
+	renderObsticales()
+
 	//draw the player
 	player.draw()
 	
 	//calls the player movement functon
 	movementFunction()
-		
-	//gravityFunction
-	gravityFunction()	
-	
-	//jump
-	jumpFunction()
 	
 	//friction
 	frictionFunction()
 
 	//calls the collide function
 	player.collide()
-
-	//player.x += velocityX
-	//player.y += velocityY
-	tick ++
-
+	
+	console.log(trueJump)//used for trobleshooting my jump code
 }
 
 
 //this function is called when a key is pressed 
 function keyDownFunction(keyboardEvent){
-	var keyPress = keyboardEvent.key
-	
 	///console.log("you pressed ", keyPress)
 	//move when key is pressed
-	if (keyPress=="w"){
+	switch(keyboardEvent.key){
+		case "w":
 		upPressed = true
-	}
-	if (keyPress=="a"){
+		break;
+		case "a":
 		leftPressed = true
-	}
-	if (keyPress=="s"){
-		downPressed = true
-	}
-	if (keyPress=="d"){
+		break;
+		case "d":
 		rightPressed = true
-	}
-	
-	if(keyPress == "w"){
-		//console.log(tick)
 	}
 } 
 
@@ -141,62 +147,50 @@ function keyDownFunction(keyboardEvent){
 
 function keyUpFunction(keyboardEvent){
 	//stop moving when key is relesed 
-	upPressed = false
-	leftPressed = false
-	rightPressed = false
-	downPressed = false
+	switch(keyboardEvent.key){
+		case "w":
+		upPressed = false
+		break;
+		case "a":
+		leftPressed = false
+		break;
+		case "d":
+		rightPressed = false
+	}
+	
+}
+if(upPressed == false && velocityY < -2){
+	velocityY = -3
 }
 
-//this is the gravity function, makes gravity work 
-function gravityFunction() {
-if(player.y < HEIGHT - playerHeight && upPressed != true){//gravity criteria
-	gravitySpeed += gravity;//gravity mechanism
-    player.y += velocityY + gravitySpeed;
-	} else{
-		gravitySpeed = 0
-	}
-}
 
 //makes the player move
 function movementFunction(){
 if(rightPressed == true){
-	player.x += velocityX
+	velocityX = 3 //if the right key is pressed then velocity = 3
 }
-if(leftPressed == true){
-	player.x -= velocityX
+if(leftPressed == true){//when the left key is pressed, go left
+	velocityX = - 3
 }
-if(downPressed == true){
-	player.y += velocityY
+if(upPressed == true && trueJump == false){
+	velocityY = -10//jump
 }
-if(upPressed == true){
-	player.y -= velocityY
+if(rightPressed || leftPressed == true){
+	player.x += velocityX//adds X velocity to player x position
 }
-}
-
-function jumpFunction() {
-if(upPressed == true && player.y < HEIGHT - player.height)//conditions for jump
-{//jump mechanism
-	jumpSpeed -= jump;
-	player.y -= velocityY + jumpSpeed
-	trueJump = true
-} else{//if no jump is happening
-	jumpSpeed = 0
-	trueJump = false
-}
-//bounce
-if(jumpSpeed < -5 && player.y == HEIGHT - player.height){//bounce condition
-	console.log("does this work?")
-}
-console.log(jumpSpeed)
+player.y += velocityY//adds y velocity value to player y position
 }
 
 
-function frictionFunction(){
-	/*if(rightPressed == false){
-		player.x = player.x + velocityX *-0.5
+function frictionFunction(){//this function also calculates gravity
+	if(trueJump == false){//if player isnt jumping then theres friction
+		velocityX *= friction
+	}else{//if the player is off the ground then apply gravity
+		velocityY += gravity;//gravity mechanism
 	}
-	if(leftPressed == false){
-		player.x = player.x + velocityX *+0.5
-	}*/
-
+	if(player.y + player.pHeight >= HEIGHT){//when truejump should be false or true
+		trueJump = false
+	}else{
+		trueJump = true
+	}
 }
