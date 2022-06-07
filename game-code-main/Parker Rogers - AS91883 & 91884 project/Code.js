@@ -58,7 +58,7 @@ class GameObject{
 		}
 	}
 	
-	setPos(x,y){
+	setPos(x,y){//might need this later
 		this.x=x
 		this.y=y
 	}
@@ -69,29 +69,29 @@ class GameObject{
 
 
 }
-
+/*
 var obsticales = [];//obsticales
 var num = 2//number of obsticales
 function generateObstacles(){//create obsticales
 	for(i = 0; i < num; i++) {
-		platforms.push(
+		obsticales.push(
 			{//obsticale data
 			x: 100 * i,
 			y: 200 + (30 * i),
 			width: 110,
 			height: 15
 			}
-		);
+		)
 	}
 }
 
 function renderObsticales(){//render obsticales
-	ctx.fillStyle ="black"
+	ctx.fillStyle = "#45597E";
 	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height);//obsticale 1
     ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height);//obsticale 2
 	console.log("is this working?")
 }
-
+*/
 
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
@@ -122,8 +122,7 @@ function updateCanvas() {
 
 	//calls the collide function
 	player.collide()
-	
-	console.log(trueJump)//used for trobleshooting my jump code
+
 }
 
 
@@ -159,9 +158,7 @@ function keyUpFunction(keyboardEvent){
 	}
 	
 }
-if(upPressed == false && velocityY < -2){
-	velocityY = -3
-}
+
 
 
 //makes the player move
