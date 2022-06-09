@@ -92,7 +92,6 @@ function renderObsticales(){//render obsticales
 	console.log("is this working?")
 }
 */
-
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
 
@@ -109,7 +108,7 @@ function updateCanvas() {
 	ctx.fillStyle="white"
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
-	renderObsticales()
+	//renderObsticales()
 
 	//draw the player
 	player.draw()
@@ -123,14 +122,17 @@ function updateCanvas() {
 	//calls the collide function
 	player.collide()
 
+	player.x += velocityX//adds velocity to player.x
 }
 
 
 //this function is called when a key is pressed 
 function keyDownFunction(keyboardEvent){
+	var keyPress = keyboardEvent.key
+	
 	///console.log("you pressed ", keyPress)
 	//move when key is pressed
-	switch(keyboardEvent.key){
+	switch(keyPress){
 		case "w":
 		upPressed = true
 		break;
@@ -159,11 +161,10 @@ function keyUpFunction(keyboardEvent){
 	
 }
 
-
-
 //makes the player move
 function movementFunction(){
 if(rightPressed == true){
+
 	velocityX = 3 //if the right key is pressed then velocity = 3
 }
 if(leftPressed == true){//when the left key is pressed, go left
