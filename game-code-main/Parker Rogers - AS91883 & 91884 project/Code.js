@@ -9,28 +9,25 @@ window.addEventListener('keyup', keyUpFunction)
 const PLAYER_IMAGE = new Image()
 PLAYER_IMAGE.src = "pixilart-drawing.png"
 
-var playerHeight = 75;
-var playerWidth = 75;
+var playerHeight = 75
+var playerWidth = 75
 
-var WIDTH = 1000;
-var HEIGHT = 800;
+var WIDTH = 1000
+var HEIGHT = 800
 var ctx
 
-var velocityX = 0;
-var velocityY = 0;
+var velocityX = 0
+var velocityY = 0
 
 var upPressed = false
 var leftPressed = false
 var rightPressed = false
 
-var gravity = 0.5;
-var friction = 0.9;
+var gravity = 0.5
+var friction = 0.9
 
 var jump = 0.15
 var trueJump = false 
-
-var tick = 0
-
 
 //player object
 class GameObject{
@@ -69,35 +66,47 @@ class GameObject{
 
 
 }
-/*
-var obsticales = [];//obsticales
-var num = 2//number of obsticales
+
+class obstacle{//obsticales
+	constructor(x,y,width,height,colour){
+		this.x=x
+		this.y=y
+		this.width=width
+		this.height=height
+		this.num=2//number of obsticales
+		this.colour=colour
+	}
+	
+	
+}
+
 function generateObstacles(){//create obsticales
-	for(i = 0; i < num; i++) {
-		obsticales.push(
-			{//obsticale data
-			x: 100 * i,
-			y: 200 + (30 * i),
-			width: 110,
-			height: 15
-			}
+	for(i = 0; i < this.num; i++){
+		obsticales.push(new obstacle(//obsticale data
+			100 * i,
+			200 + (30 * i),
+			110,
+			15,
+			"black"
+		)
 		)
 	}
 }
 
 function renderObsticales(){//render obsticales
-	ctx.fillStyle = "#45597E";
-	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height);//obsticale 1
-    ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height);//obsticale 2
-	console.log("is this working?")
+	ctx.fillStyle = "black";
+	var platform1 = new obstacle(400,100,200,30,"black")
+	//ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height)//obsticale 1
+    //ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height)//obsticale 2
 }
-*/
+
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
 
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
+	generateObstacles()
 	timer = setInterval(updateCanvas, 10)
 }
 
@@ -108,7 +117,7 @@ function updateCanvas() {
 	ctx.fillStyle="white"
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
-	//renderObsticales()
+	renderObsticales()
 
 	//draw the player
 	player.draw()
@@ -158,7 +167,6 @@ function keyUpFunction(keyboardEvent){
 		case "d":
 		rightPressed = false
 	}
-	
 }
 
 //makes the player move
