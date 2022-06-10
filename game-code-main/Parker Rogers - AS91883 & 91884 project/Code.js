@@ -9,30 +9,25 @@ window.addEventListener('keyup', keyUpFunction)
 const PLAYER_IMAGE = new Image()
 PLAYER_IMAGE.src = "pixilart-drawing.png"
 
-var playerHeight = 75;
-var playerWidth = 75;
+var playerHeight = 75
+var playerWidth = 75
 
-var WIDTH = 1000;
-var HEIGHT = 800;
+var WIDTH = 1000
+var HEIGHT = 800
 var ctx
 
-var velocityX = 3;
-var velocityY = 3;
+var velocityX = 0
+var velocityY = 0
 
 var upPressed = false
 var leftPressed = false
 var rightPressed = false
 
-var gravity = 0.5;
-var gravitySpeed = 0.25;
-var friction = 0.9;
+var gravity = 0.5
+var friction = 0.9
 
 var jump = 0.15
-var jumpSpeed = 50
 var trueJump = false 
-
-var tick = 0
-
 
 //player object
 class GameObject{
@@ -60,7 +55,7 @@ class GameObject{
 		}
 	}
 	
-	setPos(x,y){
+	setPos(x,y){//might need this later
 		this.x=x
 		this.y=y
 	}
@@ -72,14 +67,38 @@ class GameObject{
 
 }
 
-var obsticales = []
+class obstacle{//obsticales
+	constructor(x,y,width,height,colour){
+		this.x=x
+		this.y=y
+		this.width=width
+		this.height=height
+		this.num=2//number of obsticales
+		this.colour=colour
+	}
+	
+	
+}
 
-function generateObstacles(number){
-	for(i=0; i<number; i ++){
-		obsticales.push(new GameObject("obstacle"+i,image, 0,0,10,10))
+function generateObstacles(){//create obsticales
+	for(i = 0; i < this.num; i++){
+		obsticales.push(new obstacle(//obsticale data
+			100 * i,
+			200 + (30 * i),
+			110,
+			15,
+			"black"
+		)
+		)
 	}
 }
 
+function renderObsticales(){//render obsticales
+	ctx.fillStyle = "black";
+	var platform1 = new obstacle(400,100,200,30,"black")
+	//ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height)//obsticale 1
+    //ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height)//obsticale 2
+}
 
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeight)
@@ -87,6 +106,7 @@ var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeig
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
+	generateObstacles()
 	timer = setInterval(updateCanvas, 10)
 }
 
@@ -97,24 +117,21 @@ function updateCanvas() {
 	ctx.fillStyle="white"
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
+	renderObsticales()
+
 	//draw the player
 	player.draw()
 	
 	//calls the player movement functon
 	movementFunction()
-		
-	//gravityFunction
-	gravityFunction()	
-	
-	//jump
-	jumpFunction()
 	
 	//friction
-	//frictionFunction()
+	frictionFunction()
 
 	//calls the collide function
 	player.collide()
 
+	player.x += velocityX//adds velocity to player.x
 }
 
 
@@ -152,37 +169,34 @@ function keyUpFunction(keyboardEvent){
 	}
 }
 
-//this is the gravity function, makes gravity work 
-function gravityFunction() {
-if(player.y < HEIGHT - playerHeight && upPressed != true){//if playerisnt touching the bottom of the canvas and isnt going up
-	gravitySpeed += gravity;//gravity mechanism
-    player.y += velocityY + gravitySpeed;
-	} else{
-		gravitySpeed = 0
-	}
-}
-
 //makes the player move
 function movementFunction(){
 if(rightPressed == true){
-	player.x += velocityX//adds velocity to player.x 
+
+	velocityX = 3 //if the right key is pressed then velocity = 3
 }
-if(leftPressed == true){
-	player.x -= velocityX 
+if(leftPressed == true){//when the left key is pressed, go left
+	velocityX = - 3
 }
-if(upPressed == true){
-	player.y -= velocityY 
+if(upPressed == true && trueJump == false){
+	velocityY = -10//jump
 }
+if(rightPressed || leftPressed == true){
+	player.x += velocityX//adds X velocity to player x position
+}
+player.y += velocityY//adds y velocity value to player y position
 }
 
-function jumpFunction() {
-if(upPressed == true && player.y < HEIGHT - player.height)//if player is going up and isnt touching the bottom of the canvas
-{//jump mechanism
-	jumpSpeed -= jump;
-	player.y -= velocityY + jumpSpeed
-	trueJump = true
-} else{//if no jump is happening
-	jumpSpeed = 0
-	trueJump = false
-}
+
+function frictionFunction(){//this function also calculates gravity
+	if(trueJump == false){//if player isnt jumping then theres friction
+		velocityX *= friction
+	}else{//if the player is off the ground then apply gravity
+		velocityY += gravity;//gravity mechanism
+	}
+	if(player.y + player.pHeight >= HEIGHT){//when truejump should be false or true
+		trueJump = false
+	}else{
+		trueJump = true
+	}
 }
