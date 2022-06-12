@@ -79,9 +79,10 @@ class obstacle{//obsticales
 	
 	
 }
-
+var obsticales = []
 function generateObstacles(){//create obsticales
-	for(i = 0; i < this.num; i++){
+	console.log(obsticales.length)
+	for(i = 0; i < 2; i++){
 		obsticales.push(new obstacle(//obsticale data
 			100 * i,
 			200 + (30 * i),
@@ -91,12 +92,13 @@ function generateObstacles(){//create obsticales
 		)
 		)
 	}
+	console.log(obsticales.length)
 }
 
 function renderObsticales(){//render obsticales
 	ctx.fillStyle = "black";
-	var platform1 = new obstacle(400,100,200,30,"black")
-	//ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height)//obsticale 1
+	//var platform1 = new obstacle(400,100,200,30,"black")
+	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height, obsticales[0].colour)//obsticale 1
     //ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height)//obsticale 2
 }
 
@@ -107,6 +109,7 @@ var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeig
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	generateObstacles()
+	console.log(obsticales.length)
 	timer = setInterval(updateCanvas, 10)
 }
 
