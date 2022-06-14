@@ -73,18 +73,17 @@ class obstacle{//obsticales
 		this.y=y
 		this.width=width
 		this.height=height
-		this.num=2//number of obsticales
 		this.colour=colour
 	}
 	
 	
 }
-
+var obsticales = []
 function generateObstacles(){//create obsticales
-	for(i = 0; i < this.num; i++){
+	for(i = 1; i < 20; i++){
 		obsticales.push(new obstacle(//obsticale data
 			100 * i,
-			200 + (30 * i),
+			650 + (30 * i),
 			110,
 			15,
 			"black"
@@ -95,9 +94,32 @@ function generateObstacles(){//create obsticales
 
 function renderObsticales(){//render obsticales
 	ctx.fillStyle = "black";
-	var platform1 = new obstacle(400,100,200,30,"black")
-	//ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height)//obsticale 1
-    //ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height)//obsticale 2
+	//var platform1 = new obstacle(400,100,200,30,"black")
+	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height, obsticales[0].colour)//obsticale 1
+    /*ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height, obsticales[1].colour)//obsticale 2
+	ctx.fillRect(obsticales[2].x, obsticales[2].y, obsticales[2].width, obsticales[2].height, obsticales[2].colour)
+	ctx.fillRect(obsticales[3].x, obsticales[3].y, obsticales[3].width, obsticales[3].height, obsticales[3].colour)
+	ctx.fillRect(obsticales[4].x, obsticales[4].y, obsticales[4].width, obsticales[4].height, obsticales[4].colour)
+	ctx.fillRect(obsticales[5].x, obsticales[5].y, obsticales[5].width, obsticales[5].height, obsticales[5].colour)
+	ctx.fillRect(obsticales[6].x, obsticales[6].y, obsticales[6].width, obsticales[6].height, obsticales[6].colour)//obsticale 7
+	*/
+}
+
+function obsticalesCollide(){
+	let i = -1;
+        if(player.x + player.pWidth > obsticales[0].x &&//if right side of player is more than right side of obsticle
+			player.x < obsticales[0].x + obsticales[0].width &&//if left side of player is more than left side of obsticle
+			player.y + player.pHeight > obsticales[0].y &&//if bottom of player is more than the top of the obsticle
+			player.y < obsticales[0].y + obsticales[0].height){//if top of player is less than bottom of obsticle 
+				i++
+			}else{
+				i = -1
+			}
+
+		if (i > -1){
+			trueJump = false;
+			player.y = obsticales[i].y - player.pHeight;   
+		}
 }
 
 //create the player, using info from the gameobject 
@@ -107,6 +129,7 @@ var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeig
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	generateObstacles()
+	console.log(obsticales.length)
 	timer = setInterval(updateCanvas, 10)
 }
 
@@ -118,6 +141,8 @@ function updateCanvas() {
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
 	renderObsticales()
+
+	obsticalesCollide()
 
 	//draw the player
 	player.draw()
