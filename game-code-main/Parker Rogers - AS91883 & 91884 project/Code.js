@@ -29,6 +29,8 @@ var friction = 0.9
 var jump = 0.15
 var trueJump = false 
 
+num = 9//amount of obsticles i want to generate
+
 //player object
 class GameObject{
 	constructor(id,image,x,y,width,height){
@@ -61,8 +63,6 @@ class GameObject{
 	draw(){//draw the player
 		ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
 	}
-
-
 }
 
 class obstacle{//obsticales
@@ -75,18 +75,12 @@ class obstacle{//obsticales
 	}
 
 	checkCollision(){
-	let i = -1;
     if(player.x + playerWidth > this.x &&//if right side of player is more than left side of obsticle
 		player.x < this.x + this.width &&//if left side of player is less than right side of obsticle
 		player.y + playerHeight > this.y &&//if bottom of player is more than the top of the obsticle
 		player.y < this.y +this.height){//if top of player is less than bottom of obsticle 
-			i++//add one to i
-		}else{
-			i = -1
-		}
-		if (i > -1){//if i is more than -1 then not jumping and set player y to obsticle top
 			trueJump = false;
-			player.y = obsticales[i].y - playerHeight;   
+			player.y = this.y - playerHeight;//player is sitting on top of obstacle
 		}
 	}
 	
@@ -96,8 +90,8 @@ var obsticales = []
 function generateObstacles(num){//create obsticales, num is amount of obsticales
 	for(i = 1; i < num; i++){// keep making obsticales till obsticale amount == num
 		obsticales.push(new obstacle(//create new obsticale with this data
-			100 * i,//x
-			650 + (30 * i),//y
+			200 * i * Math.random(),//random position
+			550 + (30 * i) * Math.random(),//random position
 			110,//width
 			15,//height
 			"black"//colour
@@ -114,9 +108,10 @@ function obsticalesColision(){
 
 function renderObsticales(){//render obsticales
 	ctx.fillStyle = "black";
-	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height, obsticales[0].colour)//obsticale 1
-    ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height, obsticales[1].colour)//obsticale 2
-	
+	for(let i = 0; i < obsticales.length; i ++){
+		//console.log(i+","+obsticales.length)//troubleshooting
+		ctx.fillRect(obsticales[i].x, obsticales[i].y, obsticales[i].width, obsticales[i].height, obsticales[i].colour)//draws obsticles
+	}
 }
 
 //create the player, using info from the gameobject 
@@ -125,8 +120,8 @@ var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeig
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
-	generateObstacles(3)//3 is number of obsticles i want to make
-	console.log(obsticales.length)
+	generateObstacles(num)//num is obsticles amount
+	console.log("obsticles length, " + obsticales.length)
 	timer = setInterval(updateCanvas, 10)
 }
 
@@ -174,8 +169,6 @@ function keyDownFunction(keyboardEvent){
 		rightPressed = true
 	}
 } 
-
-
 
 function keyUpFunction(keyboardEvent){
 	//stop moving when key is relesed 
