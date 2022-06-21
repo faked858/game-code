@@ -6,32 +6,37 @@ window.onload=startCanvas
 window.addEventListener('keydown', keyDownFunction)
 window.addEventListener('keyup', keyUpFunction)
 
+const FPS = 10//amount of times to update canvas every second
 const PLAYER_IMAGE = new Image()
 PLAYER_IMAGE.src = "pixilart-drawing.png"
 
 const playerHeight = 75
 const playerWidth = 75
 
-var WIDTH = 1000
-var HEIGHT = 800
+const playerSpeed = 3
+
+var WIDTH = 1000//canvas width
+var HEIGHT = 800//canvas height
 var ctx
 
-var velocityX = 0
-var velocityY = 0
+var velocityX = 0//x speed
+var velocityY = 0//y speed
 
 var upPressed = false
 var leftPressed = false
 var rightPressed = false
 
-var gravity = 0.5
-var friction = 0.9
+var gravity = 0.5//gravity
+var friction = 0.9//used for friction in friction function
 
-var jump = 0.15
-var trueJump = false 
+var jump = 0.15//minus this from momentum to create realistic jump
+var trueJump = false//if player is in air or not
+const jumpHeight = -10//height of player jump
 
 num = 9//amount of obsticles i want to generate
-
-const obsticleColour = "black"
+const obsticleWidth = 110//obsticle width
+const obsticleHeight = 15//obsticle height
+const obsticleColour = "black"//obsticle colour
 
 //player object
 class GameObject{
@@ -42,7 +47,7 @@ class GameObject{
 		this.y=y
 		this.width=width
 		this.height=height
-		//contsructor variable
+		//contsructor variables
 	}
 
 	collide(){//collision detection
@@ -88,14 +93,14 @@ class Obstacle{//obsticales
 	
 }
 
-var obsticales = []
+var obsticales = []//obsticles 
 function generateObstacles(num){//create obsticales, num is amount of obsticales
-	for(i = 1; i < num; i++){// keep making obsticales till obsticale amount == num
+	for(i = 0; i < num; i++){// keep making obsticales till obsticale amount == num
 		obsticales.push(new Obstacle(//create new obsticale with this data
-			200 * i * Math.random(),//random position
-			550 + (30 * i) * Math.random(),//random position
-			110,//width
-			15,//height
+			200 * i * Math.random(),//random ish x position
+			550 + (30 * i) * Math.random(),//random ish y position
+			obsticleWidth,//width
+			obsticleHeight,//height
 			obsticleColour//colour
 		)
 		)
@@ -109,8 +114,8 @@ function obsticalesColision(){
 }
 
 function renderObsticales(){//render obsticales
-	ctx.fillStyle = obsticleColour;
-	for(let i = 0; i < obsticales.length; i ++){
+	ctx.fillStyle = obsticleColour;//colour the obsticles
+	for(let i = 0; i < obsticales.length; i ++){//how many obsticles to draw
 		//console.log(i+","+obsticales.length)//troubleshooting
 		ctx.fillRect(obsticales[i].x, obsticales[i].y, obsticales[i].width, obsticales[i].height, obsticales[i].colour)//draws obsticles
 	}
@@ -123,8 +128,8 @@ var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeig
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	generateObstacles(num)//num is obsticles amount
-	console.log("obsticles length, " + obsticales.length)
-	timer = setInterval(updateCanvas, 10)
+	console.log("obsticles length, " + obsticales.length)//used for troubleshooting
+	timer = setInterval(updateCanvas, FPS)//update canvas
 }
 
 
@@ -132,11 +137,11 @@ function startCanvas(){
 //this is used to update the canvas every frame, anything that moves must be put in here
 function updateCanvas() {
 	ctx.fillStyle="white"
-	ctx.fillRect(0,0,WIDTH, HEIGHT)
+	ctx.fillRect(0,0,WIDTH, HEIGHT)//refrshes canvas every frame
 	
-	renderObsticales()
+	renderObsticales()//draws the obsticles
 	
-	obsticalesColision()
+	obsticalesColision()//colision function for obsticles 
 
 	//draw the player
 	player.draw()
@@ -189,14 +194,13 @@ function keyUpFunction(keyboardEvent){
 //makes the player move
 function movementFunction(){
 if(rightPressed == true){
-
-	velocityX = 3 //if the right key is pressed then velocity = 3
+	velocityX = playerSpeed //if the right key is pressed then velocity = 3
 }
 if(leftPressed == true){//when the left key is pressed, go left
-	velocityX = - 3
+	velocityX = - playerSpeed
 }
 if(upPressed == true && trueJump == false){
-	velocityY = -10//jump
+	velocityY = jumpHeight//jump
 }
 if(rightPressed || leftPressed == true){
 	player.x += velocityX//adds X velocity to player x position
