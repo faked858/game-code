@@ -9,8 +9,8 @@ window.addEventListener('keyup', keyUpFunction)
 const PLAYER_IMAGE = new Image()
 PLAYER_IMAGE.src = "pixilart-drawing.png"
 
-var playerHeight = 75
-var playerWidth = 75
+const playerHeight = 75
+const playerWidth = 75
 
 var WIDTH = 1000
 var HEIGHT = 800
@@ -29,27 +29,29 @@ var friction = 0.9
 var jump = 0.15
 var trueJump = false 
 
+num = 9//amount of obsticles i want to generate
+
+const obsticleColour = "black"
+
 //player object
 class GameObject{
-	constructor(id,image,x,y,width,height,pWidth,pHeight,){
+	constructor(id,image,x,y,width,height){
 		this.id=id;
 		this.image=image
 		this.x=x
 		this.y=y
 		this.width=width
 		this.height=height
-		this.pWidth=playerWidth
-		this.pHeight=playerHeight
 		//contsructor variable
 	}
 
 	collide(){//collision detection
-		if(this.x + this.pWidth >= WIDTH){//if right side of player is more than or equal to the right side of the canvas
-			this.x = WIDTH - this.pWidth}//make sure player doesnt clip out of map
+		if(this.x + playerWidth >= WIDTH){//if right side of player is more than or equal to the right side of the canvas
+			this.x = WIDTH - playerWidth}//make sure player doesnt clip out of map
 		if(this.x <= WIDTH - WIDTH){//if left side of player is less than or equal to left side of the canvas
 		this.x = WIDTH - WIDTH}//stops left side of player leaving canvas
-		if(this.y + this.pHeight >= HEIGHT){//if the bottom of the player is more than or equal to the bottom of the canvas
-			this.y = HEIGHT - this.pHeight}//stop the player from leaving the map from the bottom
+		if(this.y + playerHeight >= HEIGHT){//if the bottom of the player is more than or equal to the bottom of the canvas
+			this.y = HEIGHT - playerHeight}//stop the player from leaving the map from the bottom
 		if(this.y < HEIGHT - HEIGHT){//if the top of the player is more than or equal to the top of the canvas
 			this.y = HEIGHT - HEIGHT//stop the player from leaving the canvas from the top
 		}
@@ -63,11 +65,9 @@ class GameObject{
 	draw(){//draw the player
 		ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
 	}
-
-
 }
 
-class obstacle{//obsticales
+class Obstacle{//obsticales
 	constructor(x,y,width,height,colour){
 		this.x=x
 		this.y=y
@@ -75,51 +75,45 @@ class obstacle{//obsticales
 		this.height=height
 		this.colour=colour
 	}
-	
+
+	checkCollision(){
+    if(player.x + playerWidth > this.x &&//if right side of player is more than left side of obsticle
+		player.x < this.x + this.width &&//if left side of player is less than right side of obsticle
+		player.y + playerHeight > this.y &&//if bottom of player is more than the top of the obsticle
+		player.y < this.y +this.height){//if top of player is less than bottom of obsticle 
+			trueJump = false;
+			player.y = this.y - playerHeight;//player is sitting on top of obstacle
+		}
+	}
 	
 }
+
 var obsticales = []
-function generateObstacles(){//create obsticales
-	for(i = 1; i < 20; i++){
-		obsticales.push(new obstacle(//obsticale data
-			100 * i,
-			650 + (30 * i),
-			110,
-			15,
-			"black"
+function generateObstacles(num){//create obsticales, num is amount of obsticales
+	for(i = 1; i < num; i++){// keep making obsticales till obsticale amount == num
+		obsticales.push(new Obstacle(//create new obsticale with this data
+			200 * i * Math.random(),//random position
+			550 + (30 * i) * Math.random(),//random position
+			110,//width
+			15,//height
+			obsticleColour//colour
 		)
 		)
 	}
 }
 
-function renderObsticales(){//render obsticales
-	ctx.fillStyle = "black";
-	//var platform1 = new obstacle(400,100,200,30,"black")
-	ctx.fillRect(obsticales[0].x, obsticales[0].y, obsticales[0].width, obsticales[0].height, obsticales[0].colour)//obsticale 1
-    /*ctx.fillRect(obsticales[1].x, obsticales[1].y, obsticales[1].width, obsticales[1].height, obsticales[1].colour)//obsticale 2
-	ctx.fillRect(obsticales[2].x, obsticales[2].y, obsticales[2].width, obsticales[2].height, obsticales[2].colour)
-	ctx.fillRect(obsticales[3].x, obsticales[3].y, obsticales[3].width, obsticales[3].height, obsticales[3].colour)
-	ctx.fillRect(obsticales[4].x, obsticales[4].y, obsticales[4].width, obsticales[4].height, obsticales[4].colour)
-	ctx.fillRect(obsticales[5].x, obsticales[5].y, obsticales[5].width, obsticales[5].height, obsticales[5].colour)
-	ctx.fillRect(obsticales[6].x, obsticales[6].y, obsticales[6].width, obsticales[6].height, obsticales[6].colour)//obsticale 7
-	*/
+function obsticalesColision(){
+	for(i = 0; i < obsticales.length; i++){//serches through the array
+		obsticales[i].checkCollision();//adds colision to any object 
+	}
 }
 
-function obsticalesCollide(){
-	let i = -1;
-        if(player.x + player.pWidth > obsticales[0].x &&//if right side of player is more than right side of obsticle
-			player.x < obsticales[0].x + obsticales[0].width &&//if left side of player is more than left side of obsticle
-			player.y + player.pHeight > obsticales[0].y &&//if bottom of player is more than the top of the obsticle
-			player.y < obsticales[0].y + obsticales[0].height){//if top of player is less than bottom of obsticle 
-				i++
-			}else{
-				i = -1
-			}
-
-		if (i > -1){
-			trueJump = false;
-			player.y = obsticales[i].y - player.pHeight;   
-		}
+function renderObsticales(){//render obsticales
+	ctx.fillStyle = obsticleColour;
+	for(let i = 0; i < obsticales.length; i ++){
+		//console.log(i+","+obsticales.length)//troubleshooting
+		ctx.fillRect(obsticales[i].x, obsticales[i].y, obsticales[i].width, obsticales[i].height, obsticales[i].colour)//draws obsticles
+	}
 }
 
 //create the player, using info from the gameobject 
@@ -128,8 +122,8 @@ var player = new GameObject("player",PLAYER_IMAGE,100,100,playerWidth,playerHeig
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
-	generateObstacles()
-	console.log(obsticales.length)
+	generateObstacles(num)//num is obsticles amount
+	console.log("obsticles length, " + obsticales.length)
 	timer = setInterval(updateCanvas, 10)
 }
 
@@ -141,8 +135,8 @@ function updateCanvas() {
 	ctx.fillRect(0,0,WIDTH, HEIGHT)
 	
 	renderObsticales()
-
-	obsticalesCollide()
+	
+	obsticalesColision()
 
 	//draw the player
 	player.draw()
@@ -177,8 +171,6 @@ function keyDownFunction(keyboardEvent){
 		rightPressed = true
 	}
 } 
-
-
 
 function keyUpFunction(keyboardEvent){
 	//stop moving when key is relesed 
@@ -219,7 +211,7 @@ function frictionFunction(){//this function also calculates gravity
 	}else{//if the player is off the ground then apply gravity
 		velocityY += gravity;//gravity mechanism
 	}
-	if(player.y + player.pHeight >= HEIGHT){//when truejump should be false or true
+	if(player.y + playerHeight >= HEIGHT){//when truejump should be false or true
 		trueJump = false
 	}else{
 		trueJump = true
