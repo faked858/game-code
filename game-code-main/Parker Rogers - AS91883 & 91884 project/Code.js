@@ -46,6 +46,7 @@ var startScreen = false//the start screen
 const COINCOLOUR = "yellow"
 var coinXOffset = 40
 var coinYOffset = -50
+var coinSize = 30
 
 //player object
 class GameObject{
@@ -132,7 +133,7 @@ function generateObstacles(num){//create obsticales, num is amount of obsticales
 	for(i = 0; i < obstNum; i++){// keep making obsticales till obsticale amount == num
 		obsticales.push(new Obstacle(//create new obsticale with this data
 			250 * i * Math.random(),//random ish x position
-			400 + (50 * i) * Math.random(),//random ish y position
+			500 + (50 * i) * Math.random(),//random ish y position
 			OBSTICALEWIDTH,//width
 			OBSTICALEHEIGHT,//height
 			OBSTICLECOLOUR//colour
@@ -167,6 +168,7 @@ var player2 = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,P
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	generateObstacles(obstNum)//obstNum is obsticles amount
+	generateCoins()
 	//console.log("obsticles length, " + obsticales.length)//used for troubleshooting
 	timer = setInterval(updateCanvas, FPS)//update canvas
 }
@@ -192,8 +194,10 @@ function updateCanvas(){
 
 	//calls the collide function
 	player.collide()
-	
-	drawCoin()
+
+	drawCoin()//draws coins
+
+	coinCollide()//collision for coins
 
 	player.x += velocityX//adds velocity to player.x
 }
@@ -235,9 +239,39 @@ function keyUpFunction(keyboardEvent){
 	}
 }
 
-function drawCoin(){
-	ctx.fillStyle = "yellow"
-	for(let i = 0; i < obsticales.length; i ++){
-	ctx.fillRect(obsticales[i].x + coinXOffset, obsticales[i].y - coinYOffset, 30, 30)
+class coins{
+	constructor(x,y,width,height,colour){
+		this.x=x
+		this.y=y
+		this.width=width
+		this.height=height
+		this.colour=colour
 	}
+}
+
+
+var coin = []
+function generateCoins(){
+	for(let i = 0; i < obsticales.length; i ++){
+		coin.push(new coins(
+		obsticales[i].x + coinXOffset,
+		obsticales[i].y + coinYOffset,
+		coinSize,
+		coinSize,
+		COINCOLOUR
+		)
+		)
+	}
+}
+
+
+function drawCoin(){
+	for(let i = 0; i < coin.length; i ++){//i is how many coins to draw, only draw as many coins as there are obsticales, coin length should be obsticale length
+		ctx.fillRect(coin[i].x, coin[i].y, coin[i].width, coin[i].height, coin[i].colour)//draw coin
+	}
+	console.log(coin)
+}
+
+
+function coinCollide(){
 }
