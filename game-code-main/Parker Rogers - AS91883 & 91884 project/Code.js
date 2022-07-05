@@ -43,10 +43,12 @@ const OBSTICLECOLOUR = "black"//obsticle colour
 
 var startScreen = false//the start screen
 
-const COINCOLOUR = "yellow"
+var coinColour = "yellow"
 var coinXOffset = 40
 var coinYOffset = -50
 var coinSize = 30
+
+var coinScore = 0
 
 //player object
 class GameObject{
@@ -197,7 +199,7 @@ function updateCanvas(){
 
 	drawCoin()//draws coins
 
-	coinCollide()//collision for coins
+	coinCollideCheck()//collision for coins
 
 	player.x += velocityX//adds velocity to player.x
 }
@@ -240,25 +242,36 @@ function keyUpFunction(keyboardEvent){
 }
 
 class coins{
-	constructor(x,y,width,height,colour){
+	constructor(x,y,width,height,colour,coinTaken){
 		this.x=x
 		this.y=y
 		this.width=width
 		this.height=height
 		this.colour=colour
+		this.coinTaken=coinTaken
+	}
+
+	coinCollide(){
+		if(player.x + PLAYERWIDTH > this.x &&//if right side of player is more than left side of obsticle
+		player.x < this.x + this.width &&//if left side of player is less than right side of obsticle
+		player.y + PLAYERHEIGHT > this.y &&//if bottom of player is more than the top of the obsticle
+		player.y < this.y +this.height){//if top of player is less than bottom of obsticle 
+			return true
+		}
 	}
 }
 
 
-var coin = []
+var coin = []//coin array, stores all coin info
 function generateCoins(){
-	for(let i = 0; i < obsticales.length; i ++){
-		coin.push(new coins(
-		obsticales[i].x + coinXOffset,
-		obsticales[i].y + coinYOffset,
-		coinSize,
-		coinSize,
-		COINCOLOUR
+	for(let i = 0; i < obsticales.length; i ++){//generate a coin per obsticle 
+		coin.push(new coins(//push new coin into array
+		obsticales[i].x + coinXOffset,//x position within all the obsticles 
+		obsticales[i].y + coinYOffset,//y position above all the obsticles 
+		coinSize,//coin width
+		coinSize,//coin height
+		coinColour,//coin colour
+		false
 		)
 		)
 	}
@@ -267,11 +280,19 @@ function generateCoins(){
 
 function drawCoin(){
 	for(let i = 0; i < coin.length; i ++){//i is how many coins to draw, only draw as many coins as there are obsticales, coin length should be obsticale length
-		ctx.fillRect(coin[i].x, coin[i].y, coin[i].width, coin[i].height, coin[i].colour)//draw coin
+		if(coin[i].coinTaken == false){//if coin isnt touched
+			ctx.fillStyle = coinColour//then 
+			ctx.fillRect(coin[i].x, coin[i].y, coin[i].width, coin[i].height)//draw coin
+		}
 	}
-	console.log(coin)
+	console.log(coinColour)
 }
 
-
-function coinCollide(){
+function coinCollideCheck(){
+	for(i = 0; i < coin.length; i++){//serches through the array
+		if(coin[i].coinCollide()){
+			coin[i].coinTaken = true
+			coinScore++
+		}//adds colision to any object
+	}
 }
