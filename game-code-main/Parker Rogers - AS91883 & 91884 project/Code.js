@@ -45,6 +45,7 @@ var startScreen = false//the start screen
 
 const COINCOLOUR = "yellow"
 var coinXOffset = 40
+var coinYOffset = -50
 
 //player object
 class GameObject{
@@ -237,6 +238,6 @@ function keyUpFunction(keyboardEvent){
 function drawCoin(){
 	ctx.fillStyle = "yellow"
 	for(let i = 0; i < obsticales.length; i ++){
-	ctx.fillRect(obsticales[i].x + 40, obsticales[i].y - 50, 30, 30)
+	ctx.fillRect(obsticales[i].x + coinXOffset, obsticales[i].y - coinYOffset, 30, 30)
 	}
 }
