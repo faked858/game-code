@@ -7,13 +7,16 @@ window.addEventListener('keydown', keyDownFunction)
 window.addEventListener('keyup', keyUpFunction)
 
 const FPS = 10//amount of times to update canvas every second
-const PLAYER_IMAGE = new Image()
-PLAYER_IMAGE.src = "pixilart-drawing.png"
+const PLAYER_IMAGE = new Image()//player sprite
+PLAYER_IMAGE.src = "pixilart-drawing.png"//player sprite source
 
 const PLAYERHEIGHT = 75//player dimensions
 const PLAYERWIDTH = 75//player dimensions
 
 const PLAYERSPEED = 3//speed of player
+const SPAWNLOCATION = 100// where the player spawns, i use this for x and y coordinates
+
+const CANVASCOORDS = 0//coordinates to draw the canvas frame refresh(white square)
 
 var WIDTH = 1000//canvas width
 var HEIGHT = 800//canvas height
@@ -38,7 +41,10 @@ const OBSTICALEWIDTH = 110//obsticle width
 const OBSTICALEHEIGHT = 15//obsticle height
 const OBSTICLECOLOUR = "black"//obsticle colour
 
-var startScreen = true
+var startScreen = false//the start screen
+
+const COINCOLOUR = "yellow"
+var coinXOffset = 40
 
 //player object
 class GameObject{
@@ -63,16 +69,41 @@ class GameObject{
 			this.y = HEIGHT - HEIGHT//stop the player from leaving the canvas from the top
 		}
 	}
-	
-	setPos(x,y){//might need this later
-		this.x=x
-		this.y=y
-	}
 
 	draw(){//draw the player
 		ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
+	} 
+
+	movementFunction(){//makes the player move
+		if(rightPressed == true){
+			velocityX = PLAYERSPEED //if the right key is pressed then velocity = 3
+		}
+		if(leftPressed == true){//when the left key is pressed, go left
+			velocityX = - PLAYERSPEED
+		}
+		if(upPressed == true && trueJump == false){
+			velocityY = JUMPHEIGHT//jump
+		}
+		if(rightPressed || leftPressed == true){
+			player.x += velocityX//adds X velocity to player x position
+		}
+		player.y += velocityY//adds y velocity value to player y position
+	}
+
+	frictionFunction(){//this function also calculates gravity
+		if(trueJump == false){//if player isnt jumping then theres friction
+			velocityX *= friction
+		}else{//if the player is off the ground then apply gravity
+			velocityY += gravity;//gravity mechanism
+		}
+		if(player.y + PLAYERHEIGHT >= HEIGHT){//when truejump should be false or true
+			trueJump = false
+		}else{
+			trueJump = true
+		}
 	}
 }
+
 
 class Obstacle{//obsticales
 	constructor(x,y,width,height,colour){
@@ -92,15 +123,15 @@ class Obstacle{//obsticales
 			player.y = this.y - PLAYERHEIGHT;//player is sitting on top of obstacle
 		}
 	}
-	
 }
+
 
 var obsticales = []//obsticles 
 function generateObstacles(num){//create obsticales, num is amount of obsticales
 	for(i = 0; i < obstNum; i++){// keep making obsticales till obsticale amount == num
 		obsticales.push(new Obstacle(//create new obsticale with this data
-			200 * i * Math.random(),//random ish x position
-			550 + (30 * i) * Math.random(),//random ish y position
+			250 * i * Math.random(),//random ish x position
+			400 + (50 * i) * Math.random(),//random ish y position
 			OBSTICALEWIDTH,//width
 			OBSTICALEHEIGHT,//height
 			OBSTICLECOLOUR//colour
@@ -109,11 +140,13 @@ function generateObstacles(num){//create obsticales, num is amount of obsticales
 	}
 }
 
+
 function obsticalesColision(){
 	for(i = 0; i < obsticales.length; i++){//serches through the array
 		obsticales[i].checkCollision()//adds colision to any object 
 	}
 }
+
 
 function renderObsticales(){//render obsticales
 	ctx.fillStyle = OBSTICLECOLOUR;//colour the obsticles
@@ -123,25 +156,25 @@ function renderObsticales(){//render obsticales
 	}
 }
 
+
 //create the player, using info from the gameobject 
-var player = new GameObject("player",PLAYER_IMAGE,100,100,PLAYERWIDTH,PLAYERHEIGHT)
+var player = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERWIDTH,PLAYERHEIGHT)
+var player2 = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERWIDTH,PLAYERHEIGHT)
+
 
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	generateObstacles(obstNum)//obstNum is obsticles amount
-	console.log("obsticles length, " + obsticales.length)//used for troubleshooting
+	//console.log("obsticles length, " + obsticales.length)//used for troubleshooting
 	timer = setInterval(updateCanvas, FPS)//update canvas
 }
 
-function startScreen(){
-	
-}
 
 //this is used to update the canvas every frame, anything that moves must be put in here
-function updateCanvas() {
+function updateCanvas(){
 	ctx.fillStyle="white"
-	ctx.fillRect(0,0,WIDTH, HEIGHT)//refrshes canvas every frame
+	ctx.fillRect(CANVASCOORDS,CANVASCOORDS,WIDTH, HEIGHT)//refrshes canvas every frame
 	
 	renderObsticales()//draws the obsticles
 	
@@ -149,15 +182,17 @@ function updateCanvas() {
 
 	//draw the player
 	player.draw()
-	
+
 	//calls the player movement functon
-	movementFunction()
+	player.movementFunction()
 	
 	//friction
-	frictionFunction()
+	player.frictionFunction()
 
 	//calls the collide function
 	player.collide()
+	
+	drawCoin()
 
 	player.x += velocityX//adds velocity to player.x
 }
@@ -179,7 +214,11 @@ function keyDownFunction(keyboardEvent){
 		case "d":
 		rightPressed = true
 	}
+	if (keyboardEvent.key =="f"){
+		startScreen = true
+	}
 } 
+
 
 function keyUpFunction(keyboardEvent){
 	//stop moving when key is relesed 
@@ -195,33 +234,9 @@ function keyUpFunction(keyboardEvent){
 	}
 }
 
-//makes the player move
-function movementFunction(){
-if(rightPressed == true){
-	velocityX = PLAYERSPEED //if the right key is pressed then velocity = 3
-}
-if(leftPressed == true){//when the left key is pressed, go left
-	velocityX = - PLAYERSPEED
-}
-if(upPressed == true && trueJump == false){
-	velocityY = JUMPHEIGHT//jump
-}
-if(rightPressed || leftPressed == true){
-	player.x += velocityX//adds X velocity to player x position
-}
-player.y += velocityY//adds y velocity value to player y position
-}
-
-
-function frictionFunction(){//this function also calculates gravity
-	if(trueJump == false){//if player isnt jumping then theres friction
-		velocityX *= friction
-	}else{//if the player is off the ground then apply gravity
-		velocityY += gravity;//gravity mechanism
-	}
-	if(player.y + PLAYERHEIGHT >= HEIGHT){//when truejump should be false or true
-		trueJump = false
-	}else{
-		trueJump = true
+function drawCoin(){
+	ctx.fillStyle = "yellow"
+	for(let i = 0; i < obsticales.length; i ++){
+	ctx.fillRect(obsticales[i].x + 40, obsticales[i].y - 50, 30, 30)
 	}
 }
