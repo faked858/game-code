@@ -47,8 +47,8 @@ var coinColour = "yellow"
 var coinXOffset = 40
 var coinYOffset = -50
 var coinSize = 30
-
 var coinScore = 0
+const COINTAKEOFFSET = -3000
 
 //player object
 class GameObject{
@@ -201,6 +201,8 @@ function updateCanvas(){
 
 	coinCollideCheck()//collision for coins
 
+	console.log("coin score is "+ coinScore)
+
 	player.x += velocityX//adds velocity to player.x
 }
 
@@ -281,18 +283,19 @@ function generateCoins(){
 function drawCoin(){
 	for(let i = 0; i < coin.length; i ++){//i is how many coins to draw, only draw as many coins as there are obsticales, coin length should be obsticale length
 		if(coin[i].coinTaken == false){//if coin isnt touched
-			ctx.fillStyle = coinColour//then 
+			ctx.fillStyle = coinColour//then set the coin colour and draw the coin
 			ctx.fillRect(coin[i].x, coin[i].y, coin[i].width, coin[i].height)//draw coin
 		}
 	}
-	console.log(coinColour)
+	//console.log(coinColour)
 }
 
 function coinCollideCheck(){
 	for(i = 0; i < coin.length; i++){//serches through the array
-		if(coin[i].coinCollide()){
-			coin[i].coinTaken = true
-			coinScore++
+		if(coin[i].coinCollide()){//if player touches coins
+			coin[i].coinTaken = true//coin has been taken
+			coinScore++//coin score is used to tell the player what their score will be
+			coin[i].x = COINTAKEOFFSET
 		}//adds colision to any object
 	}
 }
