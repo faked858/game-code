@@ -190,6 +190,9 @@ function startCanvas(){
 function updateCanvas(){
 	ctx.fillStyle="white"
 	ctx.fillRect(CANVASCOORDS,CANVASCOORDS,WIDTH, HEIGHT)//refrshes canvas every frameawd
+	ctx.font = "30px Arial"
+	ctx.fillStyle = "black"
+	ctx.fillText("your coinScore is "+ coinScore, 10, 30)
 
 	renderObsticales()//draws the obsticles
 	
@@ -215,7 +218,7 @@ function updateCanvas(){
 
 	player.x += velocityX//adds velocity to player.x
 
-	startScreenFunction()
+	startScreenFunction()//loads the start screen
 }
 
 
