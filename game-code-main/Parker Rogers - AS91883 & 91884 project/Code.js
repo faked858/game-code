@@ -13,6 +13,9 @@ PLAYER_IMAGE.src = "pixilart-drawing.png"//player sprite source
 const COIN_IMAGE = new Image()//coin sprite
 COIN_IMAGE.src = "Coin.png"//coin sprite image source
 
+const MAIN_MENU = new Image()
+MAIN_MENU.src = "MainMenu.png"
+
 const PLAYERHEIGHT = 75//player dimensions
 const PLAYERWIDTH = 75//player dimensions
 
@@ -166,14 +169,18 @@ function renderObsticales(){//render obsticales
 
 //create the player, using info from the gameobject 
 var player = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERWIDTH,PLAYERHEIGHT)
-var player2 = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERWIDTH,PLAYERHEIGHT)
 
+function startScreenFunction(){
+	if(startScreen == false){
+		ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)
+	}
+}
 
 //load canvas
 function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	generateObstacles(obstNum)//obstNum is obsticles amount
-	generateCoins()
+	generateCoins()//create the coins
 	//console.log("obsticles length, " + obsticales.length)//used for troubleshooting
 	timer = setInterval(updateCanvas, FPS)//update canvas
 }
@@ -182,8 +189,8 @@ function startCanvas(){
 //this is used to update the canvas every frame, anything that moves must be put in here
 function updateCanvas(){
 	ctx.fillStyle="white"
-	ctx.fillRect(CANVASCOORDS,CANVASCOORDS,WIDTH, HEIGHT)//refrshes canvas every frame
-	
+	ctx.fillRect(CANVASCOORDS,CANVASCOORDS,WIDTH, HEIGHT)//refrshes canvas every frameawd
+
 	renderObsticales()//draws the obsticles
 	
 	obsticalesColision()//colision function for obsticles 
@@ -207,6 +214,8 @@ function updateCanvas(){
 	console.log("coin score is "+ coinScore)
 
 	player.x += velocityX//adds velocity to player.x
+
+	startScreenFunction()
 }
 
 
