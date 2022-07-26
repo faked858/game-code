@@ -10,6 +10,9 @@ const FPS = 10//amount of times to update canvas every second
 const PLAYER_IMAGE = new Image()//player sprite
 PLAYER_IMAGE.src = "pixilart-drawing.png"//player sprite source
 
+const COIN_IMAGE = new Image()//coin sprite
+COIN_IMAGE.src = "Coin.png"//coin sprite image source
+
 const PLAYERHEIGHT = 75//player dimensions
 const PLAYERWIDTH = 75//player dimensions
 
@@ -20,7 +23,7 @@ const CANVASCOORDS = 0//coordinates to draw the canvas frame refresh(white squar
 
 var WIDTH = 1000//canvas width
 var HEIGHT = 800//canvas height
-var ctx
+var ctx//getting context
 
 var velocityX = 0//x speed
 var velocityY = 0//y speed
@@ -43,12 +46,12 @@ const OBSTICLECOLOUR = "black"//obsticle colour
 
 var startScreen = false//the start screen
 
-var coinColour = "yellow"
-var coinXOffset = 40
-var coinYOffset = -50
-var coinSize = 30
-var coinScore = 0
-const COINTAKEOFFSET = -3000
+var coinXOffset = 40//coins are drawn reletive to the platforms, this is the x offset from each platform 
+var coinYOffset = -50//coins are drawn reletive to the platforms, this is the y offset from each platform 
+var coinScore = 0//coinscore goes up by one each time a coin is taken
+const COINTAKEOFFSET = -3000//when coins are taken, add this to their coordinates to make them dissapear
+const COIN_SIZE = 30//width and height for coins
+
 
 //player object
 class GameObject{
@@ -244,13 +247,13 @@ function keyUpFunction(keyboardEvent){
 }
 
 class coins{
-	constructor(x,y,width,height,colour,coinTaken){
+	constructor(x,y,image,coinTaken,width,height){
 		this.x=x
 		this.y=y
+		this.image=image
+		this.coinTaken=coinTaken
 		this.width=width
 		this.height=height
-		this.colour=colour
-		this.coinTaken=coinTaken
 	}
 
 	coinCollide(){
@@ -270,32 +273,30 @@ function generateCoins(){
 		coin.push(new coins(//push new coin into array
 		obsticales[i].x + coinXOffset,//x position within all the obsticles 
 		obsticales[i].y + coinYOffset,//y position above all the obsticles 
-		coinSize,//coin width
-		coinSize,//coin height
-		coinColour,//coin colour
-		false
+		COIN_IMAGE,//add the coin image
+		false,//cointaken is false
+		COIN_SIZE,//width for colision
+		COIN_SIZE//height for colision
 		)
 		)
 	}
 }
 
 
-function drawCoin(){
+function drawCoin(){//draw the coins
 	for(let i = 0; i < coin.length; i ++){//i is how many coins to draw, only draw as many coins as there are obsticales, coin length should be obsticale length
 		if(coin[i].coinTaken == false){//if coin isnt touched
-			ctx.fillStyle = coinColour//then set the coin colour and draw the coin
-			ctx.fillRect(coin[i].x, coin[i].y, coin[i].width, coin[i].height)//draw coin
+			ctx.drawImage(COIN_IMAGE, coin[i].x, coin[i].y)//draw each coin with the coin image and its x and y coordinates
 		}
 	}
-	//console.log(coinColour)
 }
 
-function coinCollideCheck(){
+function coinCollideCheck(){//adds colision to any object in the array
 	for(i = 0; i < coin.length; i++){//serches through the array
 		if(coin[i].coinCollide()){//if player touches coins
 			coin[i].coinTaken = true//coin has been taken
 			coinScore++//coin score is used to tell the player what their score will be
-			coin[i].x = COINTAKEOFFSET
-		}//adds colision to any object
+			coin[i].x = COINTAKEOFFSET//take the coins off the screen 
+		}
 	}
 }
