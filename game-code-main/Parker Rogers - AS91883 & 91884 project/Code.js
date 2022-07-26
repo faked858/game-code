@@ -171,8 +171,8 @@ function renderObsticales(){//render obsticales
 var player = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERWIDTH,PLAYERHEIGHT)
 
 function startScreenFunction(){
-	if(startScreen == false){
-		ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)
+	if(startScreen == false){//if startScreen is false, then draw main menu
+		ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)//show the start screen
 	}
 }
 
