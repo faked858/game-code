@@ -106,7 +106,7 @@ class GameObject{
 		}else{//if the player is off the ground then apply gravity
 			velocityY += gravity;//gravity mechanism
 		}
-		if(player.y + PLAYERHEIGHT >= HEIGHT){//when truejump should be false or true
+		if(player.y + PLAYERHEIGHT >= HEIGHT){//determens wether truejump should be false or true
 			trueJump = false
 		}else{
 			trueJump = true
@@ -135,13 +135,40 @@ class Obstacle{//obsticales
 	}
 }
 
+function obstacleRelocate(){
+	let obsacleSpace = 50//move obsticales by this amount if needed
+	for(i = 0; i < obsticales.length; i++){//searches through the array
+		if(obsticales[i].x + obsticales[i].width >= WIDTH){//if right side of obsticale is past the right edge of the canvas
+			console.log("there is an obsticle outside the right side of the canvas")
+			obsticales[i].x -= obsacleSpace//move obsticale inside the canvas
+			coin[i].x -= obsacleSpace//move the coin with the obsticale
+		}
+		if(obsticales[i].y >= HEIGHT - obsacleSpace){//if the top of the obsticale is below 50 pixles above the bottom of the canvas
+			console.log("there is an obsticale outisde the bottom of the canvas")
+			obsticales[i].y -= obsacleSpace//move obsticale up from beneath
+			coin[i].y -= obsacleSpace//move coin with obsticale
+		}
+	}
+}
+
+//WIP
+// function obsticaleBubble(){//spaces out the obsticales so they arent so close to eachother
+// 	for(i = 0; i < obsticales.length; i++){//searches through the array
+// 		if(obsticales[i].x - obsacleSpace &&
+// 			obsticales[i].x + obsticales[i].width + obsacleSpace &&
+// 			obsticales[i].y + obsticales[i].height + obsacleSpace &&
+// 			obsticales[i].y - obsacleSpace){
+// 		}
+// 	}
+	
+// }
 
 var obsticales = []//obsticles 
 function generateObstacles(num){//create obsticales, num is amount of obsticales
 	for(i = 0; i < obstNum; i++){// keep making obsticales till obsticale amount == num
 		obsticales.push(new Obstacle(//create new obsticale with this data
 			250 * i * Math.random(),//random ish x position
-			500 + (50 * i) * Math.random(),//random ish y position
+			500 + (200 * i) * Math.random(),//random ish y position
 			OBSTICALEWIDTH,//width
 			OBSTICALEHEIGHT,//height
 			OBSTICLECOLOUR//colour
@@ -172,7 +199,7 @@ var player = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PL
 
 function startScreenFunction(){
 	if(startScreen == false){//if startScreen is false, then draw main menu
-		ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)//show the start screen
+	ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)//show the start screen
 	}
 }
 
@@ -218,7 +245,9 @@ function updateCanvas(){
 
 	player.x += velocityX//adds velocity to player.x
 
-	startScreenFunction()//loads the start screen
+	//startScreenFunction()//loads the start screen
+
+	obstacleRelocate()
 }
 
 
