@@ -151,17 +151,16 @@ function obstacleRelocate(){
 	}
 }
 
+
 //WIP
-// function obsticaleBubble(){//spaces out the obsticales so they arent so close to eachother
-// 	for(i = 0; i < obsticales.length; i++){//searches through the array
-// 		if(obsticales[i].x - obsacleSpace &&
-// 			obsticales[i].x + obsticales[i].width + obsacleSpace &&
-// 			obsticales[i].y + obsticales[i].height + obsacleSpace &&
-// 			obsticales[i].y - obsacleSpace){
-// 		}
-// 	}
-	
-// }
+function obsticaleBubble(a, b){//spaces out the obsticales so they arent so close to eachother
+ 	if(obsticales[a].x - obsacleSpace < obsticales[b].x + obsacleSpace &&//if left side of obsticale A bubble is overlapping right side of obsticale B bubble
+ 		obsticales[a].x + obsticales[a].width + obsacleSpace > obsticales[b].x - obsacleSpace &&//if the right side of obsticale A bubble is more than left side of obsticale B bubble
+ 		obsticales[a].y + obsticales[a].height + obsacleSpace > obsticales[b].y - obsacleSpace &&//if bottom of obsticale A bubble overlaps top of obsticale B bubble
+ 		obsticales[a].y - obsacleSpace < obsticales[b].y + obsacleSpace){//if top of obsticale A bubble is less than bottom of obsticale B bubble
+			console.log("obsticale A is coliding with obsticale B")
+ 		}
+	}
 
 var obsticales = []//obsticles 
 function generateObstacles(num){//create obsticales, num is amount of obsticales
@@ -245,7 +244,7 @@ function updateCanvas(){
 
 	player.x += velocityX//adds velocity to player.x
 
-	//startScreenFunction()//loads the start screen
+	startScreenFunction()//loads the start screen
 
 	obstacleRelocate()
 }
