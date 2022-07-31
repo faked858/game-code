@@ -13,11 +13,13 @@ PLAYER_IMAGE.src = "pixilart-drawing.png"//player sprite source
 const COIN_IMAGE = new Image()//coin sprite
 COIN_IMAGE.src = "Coin.png"//coin sprite image source
 
-const MAIN_MENU = new Image()
-MAIN_MENU.src = "MainMenu.png"
+const MAIN_MENU = new Image()//main menu 
+MAIN_MENU.src = "MainMenu.png"//main menu source
 
-const PLAYERHEIGHT = 75//player dimensions
-const PLAYERWIDTH = 75//player dimensions
+const WIN_SCREEN = new Image()//win screen
+WIN_SCREEN.src = "YouWinScreen.png"//win screen source
+
+const PLAYERSIZE = 75//player dimensions
 
 const PLAYERSPEED = 3//speed of player
 const SPAWNLOCATION = 100// where the player spawns, i use this for x and y coordinates
@@ -46,6 +48,7 @@ var obstNum = 9//amount of obsticles i want to generate
 const OBSTICALEWIDTH = 110//obsticle width
 const OBSTICALEHEIGHT = 15//obsticle height
 const OBSTICLECOLOUR = "black"//obsticle colour
+var obsacleSpace = 50//move obsticales by this amount if needed
 
 var startScreen = false//the start screen
 
@@ -69,12 +72,12 @@ class GameObject{
 	}
 
 	collide(){//collision detection
-		if(this.x + PLAYERWIDTH >= WIDTH){//if right side of player is more than or equal to the right side of the canvas
-			this.x = WIDTH - PLAYERWIDTH}//make sure player doesnt clip out of map
+		if(this.x + PLAYERSIZE >= WIDTH){//if right side of player is more than or equal to the right side of the canvas
+			this.x = WIDTH - PLAYERSIZE}//make sure player doesnt clip out of map
 		if(this.x <= WIDTH - WIDTH){//if left side of player is less than or equal to left side of the canvas
 		this.x = WIDTH - WIDTH}//stops left side of player leaving canvas
-		if(this.y + PLAYERHEIGHT >= HEIGHT){//if the bottom of the player is more than or equal to the bottom of the canvas
-			this.y = HEIGHT - PLAYERHEIGHT}//stop the player from leaving the map from the bottom
+		if(this.y + PLAYERSIZE >= HEIGHT){//if the bottom of the player is more than or equal to the bottom of the canvas
+			this.y = HEIGHT - PLAYERSIZE}//stop the player from leaving the map from the bottom
 		if(this.y < HEIGHT - HEIGHT){//if the top of the player is more than or equal to the top of the canvas
 			this.y = HEIGHT - HEIGHT//stop the player from leaving the canvas from the top
 		}
@@ -106,7 +109,7 @@ class GameObject{
 		}else{//if the player is off the ground then apply gravity
 			velocityY += gravity;//gravity mechanism
 		}
-		if(player.y + PLAYERHEIGHT >= HEIGHT){//determens wether truejump should be false or true
+		if(player.y + PLAYERSIZE >= HEIGHT){//determens wether truejump should be false or true
 			trueJump = false
 		}else{
 			trueJump = true
@@ -116,68 +119,78 @@ class GameObject{
 
 
 class Obstacle{//obsticales
-	constructor(x,y,width,height,colour){
+	constructor(x,y,width,height,colour,id){
 		this.x=x
 		this.y=y
 		this.width=width
 		this.height=height
 		this.colour=colour
+		this.id=id
 	}
 
 	checkCollision(){
-    if(player.x + PLAYERWIDTH > this.x &&//if right side of player is more than left side of obsticle
+    if(player.x + PLAYERSIZE > this.x &&//if right side of player is more than left side of obsticle
 		player.x < this.x + this.width &&//if left side of player is less than right side of obsticle
-		player.y + PLAYERHEIGHT > this.y &&//if bottom of player is more than the top of the obsticle
+		player.y + PLAYERSIZE > this.y &&//if bottom of player is more than the top of the obsticle
 		player.y < this.y +this.height){//if top of player is less than bottom of obsticle 
 			trueJump = false;
-			player.y = this.y - PLAYERHEIGHT;//player is sitting on top of obstacle
+			player.y = this.y - PLAYERSIZE;//player is sitting on top of obstacle
 		}
 	}
 }
 
 function obstacleRelocate(){
-	let obsacleSpace = 50//move obsticales by this amount if needed
 	for(i = 0; i < obsticales.length; i++){//searches through the array
 		if(obsticales[i].x + obsticales[i].width >= WIDTH){//if right side of obsticale is past the right edge of the canvas
-			console.log("there is an obsticle outside the right side of the canvas")
+			//console.log("there is an obsticle outside the right side of the canvas")
 			obsticales[i].x -= obsacleSpace//move obsticale inside the canvas
 			coin[i].x -= obsacleSpace//move the coin with the obsticale
 		}
 		if(obsticales[i].y >= HEIGHT - obsacleSpace){//if the top of the obsticale is below 50 pixles above the bottom of the canvas
-			console.log("there is an obsticale outisde the bottom of the canvas")
+			//console.log("there is an obsticale outisde the bottom of the canvas")
 			obsticales[i].y -= obsacleSpace//move obsticale up from beneath
 			coin[i].y -= obsacleSpace//move coin with obsticale
 		}
 	}
 }
 
-
-//WIP
-function obsticaleBubble(a, b){//spaces out the obsticales so they arent so close to eachother
- 	if(obsticales[a].x - obsacleSpace < obsticales[b].x + obsacleSpace &&//if left side of obsticale A bubble is overlapping right side of obsticale B bubble
- 		obsticales[a].x + obsticales[a].width + obsacleSpace > obsticales[b].x - obsacleSpace &&//if the right side of obsticale A bubble is more than left side of obsticale B bubble
- 		obsticales[a].y + obsticales[a].height + obsacleSpace > obsticales[b].y - obsacleSpace &&//if bottom of obsticale A bubble overlaps top of obsticale B bubble
- 		obsticales[a].y - obsacleSpace < obsticales[b].y + obsacleSpace){//if top of obsticale A bubble is less than bottom of obsticale B bubble
-			console.log("obsticale A is coliding with obsticale B")
+/*
+WIP
+function obsticaleBubble(){//spaces out the obsticales so they arent so close to eachother
+	for(i = 1; i < obstNum; i++){
+		let ii = i - 1;
+	if(obsticales[i].x - obsacleSpace < obsticales[ii].x + obsticales[ii].width + obsacleSpace &&//if left side of obsticale A bubble is overlapping right side of obsticale B bubble
+ 		obsticales[i].x + obsticales[i].width + obsacleSpace > obsticales[ii].x - obsacleSpace &&//if the right side of obsticale A bubble is more than left side of obsticale B bubble
+ 		obsticales[i].y + obsticales[i].height + obsacleSpace > obsticales[ii].y - obsacleSpace &&//if bottom of obsticale A bubble overlaps top of obsticale B bubble
+ 		obsticales[i].y - obsacleSpace < obsticales[ii].y + obsticales[ii].y + obsacleSpace){//if top of obsticale A bubble is less than bottom of obsticale B bubble
+		console.log("obsticale 2 is coliding with obsticale 3")
+		//obsticales[i].x += Math.floor(Math.random() * 25)
+		//obsticales[i].y += Math.floor(Math.random() * 25)
  		}
 	}
+}
+*/
 
 var obsticales = []//obsticles 
 function generateObstacles(num){//create obsticales, num is amount of obsticales
+	let randomX = 250
+	let randomY = 500
+	let YMultiply = 200
 	for(i = 0; i < obstNum; i++){// keep making obsticales till obsticale amount == num
 		obsticales.push(new Obstacle(//create new obsticale with this data
-			250 * i * Math.random(),//random ish x position
-			500 + (200 * i) * Math.random(),//random ish y position
+		randomX * i * Math.random(),//random ish x position
+		randomY + (YMultiply * i) * Math.random(),//random ish y position
 			OBSTICALEWIDTH,//width
 			OBSTICALEHEIGHT,//height
-			OBSTICLECOLOUR//colour
+			OBSTICLECOLOUR,//colour
+			i
 		)
 		)
 	}
 }
 
 
-function obsticalesColision(){
+function obsticalesColision(){//add collision to all obsticales for the player
 	for(i = 0; i < obsticales.length; i++){//serches through the array
 		obsticales[i].checkCollision()//adds colision to any object 
 	}
@@ -194,13 +207,18 @@ function renderObsticales(){//render obsticales
 
 
 //create the player, using info from the gameobject 
-var player = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERWIDTH,PLAYERHEIGHT)
+var player = new GameObject("player",PLAYER_IMAGE,SPAWNLOCATION,SPAWNLOCATION,PLAYERSIZE,PLAYERSIZE)
 
 function startScreenFunction(){
 	if(startScreen == false){//if startScreen is false, then draw main menu
-	ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)//show the start screen
+		ctx.drawImage(MAIN_MENU, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)//show the start screen
+	}
+	if(coinScore >= obsticales.length){//when you collect all the coins
+		ctx.drawImage(WIN_SCREEN, CANVASCOORDS, CANVASCOORDS, WIDTH, HEIGHT)//display the win screen
+		console.log("you win!")
 	}
 }
+
 
 //load canvas
 function startCanvas(){
@@ -246,7 +264,11 @@ function updateCanvas(){
 
 	startScreenFunction()//loads the start screen
 
-	obstacleRelocate()
+	obstacleRelocate()//stops obsticales from leaving canvas
+
+	//obsticaleBubble()
+
+	//console.log(obsticales.length)
 }
 
 
@@ -265,8 +287,21 @@ function keyDownFunction(keyboardEvent){
 		break;
 		case "d":
 		rightPressed = true
+		break;
+		case "W":
+		upPressed = true
+		break;
+		case "A":
+		leftPressed = true
+		break;
+		case "D":
+		rightPressed = true
+
 	}
-	if (keyboardEvent.key =="f"){
+	if(keyboardEvent.key == "f"){//if f pressed, stop drawing startScreen
+		startScreen = true
+	}
+	if(keyboardEvent.key == "F"){//the or statement wasnt working in the if statement above so i just made another one for capital F
 		startScreen = true
 	}
 } 
@@ -283,6 +318,15 @@ function keyUpFunction(keyboardEvent){
 		break;
 		case "d":
 		rightPressed = false
+		break;
+		case "W":
+		upPressed = false
+		break;
+		case "A":
+		leftPressed = false
+		break;
+		case "D":
+		rightPressed = false
 	}
 }
 
@@ -297,9 +341,9 @@ class coins{
 	}
 
 	coinCollide(){
-		if(player.x + PLAYERWIDTH > this.x &&//if right side of player is more than left side of obsticle
+		if(player.x + PLAYERSIZE > this.x &&//if right side of player is more than left side of obsticle
 		player.x < this.x + this.width &&//if left side of player is less than right side of obsticle
-		player.y + PLAYERHEIGHT > this.y &&//if bottom of player is more than the top of the obsticle
+		player.y + PLAYERSIZE > this.y &&//if bottom of player is more than the top of the obsticle
 		player.y < this.y +this.height){//if top of player is less than bottom of obsticle 
 			return true
 		}
